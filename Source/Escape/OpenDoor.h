@@ -32,12 +32,19 @@ public:
 private:
 
 	void Open();
+	void Close();
 
-	UPROPERTY(VisibleAnywhere)
-	float openAngle = 90.0f;
+	bool isOpen = false;
+
+	//UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
+	float closeTime = 5.0f;
+	float openTime;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* pressurePlate;
 
 	AActor* triggeringActor;
+
+	AActor* owner;
 };
