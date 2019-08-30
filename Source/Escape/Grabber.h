@@ -27,5 +27,5 @@ public:
 private:
 
 	AActor* owner;
-		
+	float reach;
 };
