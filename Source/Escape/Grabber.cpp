@@ -24,6 +24,23 @@ void UGrabber::BeginPlay()
 	Super::BeginPlay();
 
 	owner = GetOwner();
+	physicsHandle = owner->FindComponentByClass<UPhysicsHandleComponent>();
+	if (!physicsHandle)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No physicsHandle found on %s"), *owner->GetName());
+	}
+
+	input = owner->FindComponentByClass<UInputComponent>();
+	if (!input)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No input class found on %s"), *owner->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Input!"));
+		// Bind input axis
+		input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+	}
 }
 
 
@@ -31,20 +48,18 @@ void UGrabber::BeginPlay()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+}
+
+void UGrabber::Grab()
+{
+	// raycast and grab whats in reachFVector playerPosition;
 	FVector playerPosition;
 	FRotator playerRotation;
 
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT playerPosition, OUT playerRotation);
 
-	//UE_LOG(LogTemp, Warning, TEXT("position: %s and rotation: %s"), *(playerPosition.ToString()), *(playerRotation.ToString()));
-
 	FVector viewDirection = playerRotation.Vector();
-	FVector target = playerPosition + viewDirection * reach;
-
-	DrawDebugLine(GetWorld(), playerPosition, target, FColor::Red);
-
-	FCollisionQueryParams traceParams(FName(TEXT("")), false, GetOwner());
+	FVector target = playerPosition + viewDirection * reach; FCollisionQueryParams traceParams(FName(TEXT("")), false, GetOwner());
 
 	FHitResult hit;
 	GetWorld()->LineTraceSingleByObjectType(OUT hit, playerPosition, target, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), traceParams);
@@ -53,7 +68,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	if (hitActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("hit actor %s"), *(hitActor->GetName()));
+		UE_LOG(LogTemp, Warning, TEXT("grab actor %s"), *(hitActor->GetName()));
 	}
 }
 

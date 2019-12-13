@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/InputComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Grabber.generated.h"
 
 
@@ -28,4 +30,9 @@ private:
 
 	AActor* owner;
 	float reach;
+
+	UPhysicsHandleComponent* physicsHandle = nullptr;
+	UInputComponent* input = nullptr;
+
+	void Grab();
 };
